@@ -20,6 +20,10 @@ The `refetch` function from `useSession` is wrapped in `useCallback` so its refe
 
 Utility classes like `.btn`, `.badge-*`, `.dot-*`, `.spinner`, `.error`, `.output` are in the global stylesheet and applied via plain string class names in JSX (e.g., `className="btn btn-primary"`). They are NOT CSS Module classes, so they must not be imported as a module object.
 
+## Interrupt status lands on 'done', not 'error'
+
+When the user interrupts a session, the backend closes the SSE connection. The `useStream` reader loop exits cleanly (no `AbortError`), so `status` transitions to `'done'`. Do not check `status === 'error'` to detect an interruption — there is no reliable client-side signal for it. The interrupt handler navigates away immediately so the misleading "Planning complete" state is never reached.
+
 ## Leaflet CSS must be scoped (Phase 3)
 
 Do not import Leaflet's CSS globally. Import it as a side-effect only inside the `TravelMap` component to avoid polluting the global stylesheet with Leaflet's resets.

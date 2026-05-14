@@ -29,3 +29,11 @@
 **Decision:** Itinerary-related types (`Day`, `Stop`, `ItineraryItem` subtypes) are not defined yet.
 
 **Reason:** The exact shape of the Go backend's itinerary response is unknown. Defining types now would require assumptions that may need to be reversed. Phase 3 implementation will be driven by the actual API contract.
+
+## ADR-005: Interrupt navigates to goal input immediately
+
+**Decision:** Clicking "Stop agent" calls `interruptSession` then immediately navigates to `/` regardless of the API result.
+
+**Reason:** When the stream ends after an interrupt, the reader loop exits normally and `status` lands on `'done'`, which previously showed "Planning complete" — a misleading message. Navigating away on click avoids the ambiguity entirely and matches user intent (they stopped because they want to start over).
+
+**Trade-off:** The user can't see the partial output that had streamed before stopping. Acceptable for now; partial output could be surfaced in Phase 3 via the completed session record.
